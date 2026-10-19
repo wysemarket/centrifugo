@@ -6,10 +6,15 @@ on:
     branches:
       - '**'
   pull_request:
+concurrency:
+  group: centrifugo-tests-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   golangci:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, wyse-local]
+    timeout-minutes: 5
     # Prevent duplicate builds on internal PRs.
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     steps:
@@ -27,7 +32,8 @@ jobs:
           args: --timeout 10m0s --verbose
   test:
     name: Test with Go ${{ matrix.go-version }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, wyse-local]
+    timeout-minutes: 5
     # Prevent duplicate builds on internal PRs.
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     strategy:
