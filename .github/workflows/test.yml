@@ -13,7 +13,7 @@ concurrency:
 jobs:
   golangci:
     name: Lint
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ${{ vars.CI_RUNNER_PROVIDER == 'github' && 'ubuntu-24.04' || 'blacksmith-2vcpu-ubuntu-2404' }}
     timeout-minutes: 5
     # Prevent duplicate builds on internal PRs.
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
@@ -34,7 +34,7 @@ jobs:
           args: --timeout 10m0s --verbose
   test:
     name: Test with Go ${{ matrix.go-version }}
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ${{ vars.CI_RUNNER_PROVIDER == 'github' && 'ubuntu-24.04' || 'blacksmith-2vcpu-ubuntu-2404' }}
     timeout-minutes: 5
     # Prevent duplicate builds on internal PRs.
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
